@@ -30,8 +30,15 @@ async function run() {
     await client.connect();
 
     const jobsCollection = client.db('alljobs').collection('OnSiteJob')
+    const jobsCollection2 = client.db('alljobs').collection('alljobs2')
     app.get("/remote", async (req, res) => {
       const result = await jobsCollection.find().toArray();
+      res.send(result);
+    });
+
+
+    app.get("/jobs", async (req, res) => {
+      const result = await jobsCollection2.find().toArray();
       res.send(result);
     });
 
@@ -45,7 +52,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
 
 
 
