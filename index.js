@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,8 +29,39 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+
+    const jobCollection = client.db('jobDB').collection('job');
+
+
+app.get('/addproducts', async (req, res) => {
+  try {
+    const query = {};
+    if (req.query.email) {
+      query.email = req.query.email;
+    }
+    const result = await jobCollection.find(query).toArray();
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+    app.post('/addproducts', async(req, res) =>{
+      const products = req.body;
+      console.log(products);
+      const result = await jobCollection.insertOne(products);
+      res.send(result);
+  
+  })
+
     const jobsCollection = client.db('alljobs').collection('OnSiteJob')
     const jobsCollection2 = client.db('alljobs').collection('alljobs2')
+    const jobsjobsCollection = client.db('alljobs').collection('jobs')
+
+
+
     app.get("/remote", async (req, res) => {
       const result = await jobsCollection.find().toArray();
       res.send(result);
@@ -42,6 +73,29 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/jobs/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id:new ObjectId(id)}
+      const result=await jobsjobsCollection.findOne(query);
+      res.send(result)
+    })
+
+
+    // app.get('/addproducts/:id', async(req, res) => {
+    //   const id = req.params.id;
+    //   const query = {_id: new ObjectId(id)}
+    //   const result = await jobCollection.findOne(query);
+    //   res.send(result);
+    // })
+
+
+    app.get('/addproducts/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await jobCollection.findOne(query);
+      res.send(result);
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -52,7 +106,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
 
 
 app.get('/', (req, res) => {
