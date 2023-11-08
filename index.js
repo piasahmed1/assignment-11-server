@@ -107,7 +107,6 @@ app.get('/addproducts', async (req, res) => {
 }
 run().catch(console.dir);
 
-
 app.get('/', (req, res) => {
   res.send('assignment 11 server is running')
 })
