@@ -97,7 +97,6 @@ app.get('/addproducts', async (req, res) => {
     })
 
 
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
@@ -110,6 +109,7 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
   res.send('assignment 11 server is running')
 })
+
 
 
 app.listen(port, () => {
